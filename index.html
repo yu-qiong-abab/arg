@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量子动力系统 - 安全档案库</title>
+    <style>
+        :root {
+            --bg-primary: #0a1929;
+            --bg-secondary: #001e3c;
+            --accent: #0d7ea4;
+            --text-primary: #e6f7ff;
+            --text-secondary: #a3d9ff;
+            --error: #ff4d4f;
+            --success: #52c41a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(13, 126, 164, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 70%, rgba(13, 126, 164, 0.1) 0%, transparent 20%);
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(0deg, 
+                    rgba(13, 126, 164, 0.05), 
+                    rgba(13, 126, 164, 0.05) 1px, 
+                    transparent 1px, 
+                    transparent 5px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 头部样式 */
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(13, 126, 164, 0.3);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .system-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 77, 79, 0.1);
+            border: 1px solid var(--error);
+            padding: 3px 8px;
+            font-size: 0.8rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(13, 126, 164, 0.5);
+        }
+        
+        /* 登录区域样式 */
+        #login-section {
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid rgba(13, 126, 164, 0.5);
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        #login-section::before {
+            content: "ACCESS LEVEL 0";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg-primary);
+            padding: 0 10px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .login-heading {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .login-heading img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: conic-gradient(var(--accent) 0% 100%, transparent 0%);
+            opacity: 0.7;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(13, 126, 164, 0.5);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(13, 126, 164, 0.3);
+        }
+        
+        .login-btn {
+            background: linear-gradient(135deg, var(--accent), #0a4a65);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(135deg, #0b8db8, #0a4a65);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 内容区域样式 */
+        #content-section {
+            display: none;
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid rgba(13, 126, 164, 0.5);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        #access-level {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+        
+        #access-level .level {
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(13, 126, 164, 0.1);
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+        
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .access-card {
+            background: rgba(0, 20, 40, 0.7);
+            border: 1px solid rgba(13, 126, 164, 0.3);
+            border-radius: 8px;
+            padding: 1.2rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .access-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .access-card h3 {
+            margin-bottom: 0.8rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .access-card h3::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+        
+        .access-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .card-icon {
+            font-size: 2rem;
+            color: rgba(13, 126, 164, 0.5);
+            margin-bottom: 15px;
+        }
+        
+        .access-level {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(13, 126, 164, 0.2);
+            padding: 3px 8px;
+            font-size: 0.8rem;
+            border-bottom-left-radius: 8px;
+        }
+        
+        /* 文件查看区域 */
+        #file-viewer {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(13, 126, 164, 0.3);
+            padding-top: 1.5rem;
+        }
+        
+        #file-viewer h2 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .file-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .file-item {
+            background: rgba(0, 20, 40, 0.7);
+            border: 1px solid rgba(13, 126, 164, 0.3);
+            border-radius: 4px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-item:hover {
+            border-color: var(--accent);
+            background: rgba(0, 30, 60, 0.8);
+        }
+        
+        .file-item h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .file-item h4::before {
+            content: "📄";
+        }
+        
+        .file-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        #file-content {
+            display: none;
+            margin-top: 2rem;
+            background: rgba(0, 20, 40, 0.7);
+            border: 1px solid rgba(13, 126, 164, 0.3);
+            border-radius: 4px;
+            padding: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        #file-content pre {
+            white-space: pre-wrap;
+            font-family: 'Consolas', monospace;
+            line-height: 1.6;
+        }
+        
+        /* 错误页面样式 */
+        #error-section {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            color: var(--error);
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px rgba(255, 77, 79, 0.7);
+        }
+        
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .system-info {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--error);
+        }
+        
+        .system-info p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 10px 20px;
+            background: rgba(255, 77, 79, 0.1);
+            border: 1px solid var(--error);
+            border-radius: 4px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 77, 79, 0.2);
+        }
+        
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: auto;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(13, 126, 164, 0.3);
+        }
+        
+        /* 终端闪烁光标效果 */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: var(--accent);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            header {
+                padding: 1rem 0;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            #login-section {
+                padding: 1.5rem;
+            }
+            
+            .access-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="system-label">SYSTEM STATUS: ONLINE</div>
+            <h1>量子动力系统 - 安全档案库</h1>
+            <p>保护级别：最高机密<span class="cursor"></span></p>
+        </header>
+        
+        <!-- 登录部分 -->
+        <section id="login-section">
+            <div class="login-heading">
+                <div class="card-icon">🔒</div>
+                <h2>需要验证凭据</h2>
+                <p>输入您的访问凭据以继续</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="input-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required autocomplete="off">
+                </div>
+                
+                <button type="submit" class="login-btn">登录系统</button>
+            </form>
+        </section>
+        
+        <!-- 内容区域（显示登录成功后） -->
+        <section id="content-section">
+            <div id="access-level">
+                <div>当前访问级别</div>
+                <div class="level">LEVEL <span id="level-value"></span></div>
+            </div>
+            
+            <h2>可用访问权限</h2>
+            <div class="access-grid">
+                <div class="access-card" data-level="1">
+                    <div class="access-level">级别 1</div>
+                    <h3>项目概述</h3>
+                    <p>基本项目信息和公开文档</p>
+                </div>
+                
+                <div class="access-card" data-level="2">
+                    <div class="access-level">级别 2</div>
+                    <h3>技术文档</h3>
+                    <p>非敏感技术细节和设备规格</p>
+                </div>
+                
+                <div class="access-card" data-level="3">
+                    <div class="access-level">级别 3</div>
+                    <h3>测试数据</h3>
+                    <p>初步实验结果和分析报告</p>
+                </div>
+                
+                <div class="access-card" data-level="4">
+                    <div class="access-level">级别 4</div>
+                    <h3>事故档案</h3>
+                    <p>事故记录和调查文件</p>
+                </div>
+                
+                <div class="access-card" data-level="5">
+                    <div class="access-level">级别 5</div>
+                    <h3>测试人员档案</h3>
+                    <p>所有参与人员的完整档案</p>
+                </div>
+            </div>
+            
+            <!-- 文件查看区域 -->
+            <div id="file-viewer">
+                <h2>档案文档 <span id="current-level-display"></span></h2>
+                
+                <div id="level-1-content" class="file-content-level" style="display: none;">
+                    <div class="file-list">
+                        <div class="file-item" data-file="project_summary">
+                            <h4>项目摘要.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：28KB</span>
+                                <span>创建：1998-05-12</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="initial_notes">
+                            <h4>初步记录.md</h4>
+                            <div class="file-meta">
+                                <span>大小：14KB</span>
+                                <span>创建：1998-06-03</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 技术文档部分 (级别 2) -->
+                <div id="level-2-content" class="file-content-level" style="display: none;">
+                    <div class="file-list">
+                        <div class="file-item" data-file="tech_specs">
+                            <h4>技术规格书.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：1.2MB</span>
+                                <span>创建：1998-07-22</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="interface_protocol">
+                            <h4>接口协议文档.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：86KB</span>
+                                <span>创建：1998-08-15</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="quantum_entanglement">
+                            <h4>量子缠结系统说明.md</h4>
+                            <div class="file-meta">
+                                <span>大小：45KB</span>
+                                <span>创建：1998-09-10</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="system_architecture">
+                            <h4>系统架构图.png</h4>
+                            <div class="file-meta">
+                                <span>大小：780KB</span>
+                                <span>创建：1998-10-05</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 测试数据部分 (级别 3) -->
+                <div id="level-3-content" class="file-content-level" style="display: none;">
+                    <div class="file-list">
+                        <div class="file-item" data-file="phase1_results">
+                            <h4>第一阶段测试结果.csv</h4>
+                            <div class="file-meta">
+                                <span>大小：320KB</span>
+                                <span>创建：1999-01-15</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="neural_analysis">
+                            <h4>神经模式分析报告.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：890KB</span>
+                                <span>创建：1999-02-28</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="subject_comparison">
+                            <h4>测试对象比较数据.xlsx</h4>
+                            <div class="file-meta">
+                                <span>大小：540KB</span>
+                                <span>创建：1999-03-12</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="anomaly_log">
+                            <h4>异常事件日志.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：120KB</span>
+                                <span>创建：1999-04-20</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="level-4-content" class="file-content-level" style="display: none;">
+                    <div class="file-list">
+                        <div class="file-item" data-file="incident_report">
+                            <h4>QDS-003事件报告.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：1.4MB</span>
+                                <span>创建：1999-10-30</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="flynn_interviews">
+                            <h4>大卫·费莱恩访谈记录.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：64KB</span>
+                                <span>创建：1999-09-14</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="investigation_log">
+                            <h4>联邦调查局访问日志.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：32KB</span>
+                                <span>创建：1999-11-05</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="level-5-content" class="file-content-level" style="display: none;">
+                    <div class="file-list">
+                        <div class="file-item" data-file="subject001">
+                            <h4>Subject001_FlynnD.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：2.3MB</span>
+                                <span>创建：1999-05-10</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="subject002">
+                            <h4>Subject002_MichaelsA.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：1.7MB</span>
+                                <span>创建：1999-06-22</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="subject003">
+                            <h4>Subject003_ChenL.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：1.9MB</span>
+                                <span>创建：1999-07-15</span>
+                            </div>
+                        </div>
+                        <div class="file-item" data-file="subject004">
+                            <h4>Subject004_PetrovV.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：2.1MB</span>
+                                <span>创建：1999-08-19</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="file-content">
+                    <pre id="file-content-pre"></pre>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 错误页面 -->
+        <section id="error-section">
+            <div class="error-code">404</div>
+            <h2 class="error-message">访问受限 - 凭证无效</h2>
+            
+            <div class="system-info">
+                <p>❌ 错误：提供的凭证不被识别或访问级别不足</p>
+                <p>安全协议已触发。系统记录此访问尝试。</p>
+                <p>参考代码: <strong>SEC_ERR_0xC0DE</strong></p>
+                <p>请获取有效凭证后再试一次。</p>
+            </div>
+            
+            <a href="javascript:location.reload()" class="back-link">返回登录</a>
+        </section>
+    </div>
+    
+    <footer>
+        <p>量子动力系统档案库 | 1998-1999 | 安全级别：奥米茄级</p>
+        <p>Ⓧ 未经授权访问将受到联邦起诉</p>
+    </footer>
+
+    <script>
+        // 用户凭证存储（隐藏和混淆）
+        const hiddenAccounts = () => {
+            const accounts = {
+                // David Flynn (Level 4)
+                "DAVID_FLYNN": {
+                    username: "david_flynn",
+                    password: "texas1983",
+                    level: 4
+                },
+                // FBI Investigator (Level 5)
+                "FBI_AGENT_MORGAN": {
+                    username: "morgan_f",
+                    password: "quantum_topsecret",
+                    level: 5
+                },
+                // Senior Researcher (Level 5)
+                "DR_DRAKE": {
+                    username: "dr_drake",
+                    password: "filematrix_override99",
+                    level: 5
+                }
+            };
+            
+            return accounts;
+        };
+        
+        // 获取账户信息的方法
+        const getAccounts = () => {
+            const accounts = hiddenAccounts();
+            return {
+                "david_flynn": accounts.DAVID_FLYNN,
+                "morgan_f": accounts.FBI_AGENT_MORGAN,
+                "dr_drake": accounts.DR_DRAKE
+            };
+        };
+        
+        // 文件内容（ARG线索隐藏点）
+        const fileContents = {
+            project_summary: `量子动力系统 - QDS-003
+项目目标：探索意识的量子数字化传输
+负责人：█████博士
+日期：1998年-1999年
+
+项目概述：
+QDS-003旨在实现人类意识的暂时性量子传输，构建沉浸式数字体验系统。测试第一阶段包括三名志愿者的意识映射实验。
+
+关键技术：
+- 量子缠结信号放大器
+- 意识矩阵定位器
+- 跨维度接口协议
+
+参考文档：
+QDS-TR-1998-15
+QDS-TR-1999-07
+
+----------
+注意：最后一条记录显示了异常信号模式 DF_TEXAS_83
+`,
+            initial_notes: `**初步记录 - 1998年6月**
+初始测试显示有希望的信号稳定性，但某些测试对象报告了短暂性意识错位现象。特别标注：受试者D.F.表现出异常的神经适应性，可能是德州独特环境因素造成的。
+
+需要进一步调查这种神经模式的来源。`,
+            
+            // 技术文档内容
+            tech_specs: `**量子动力系统技术规格书**
+版本：QDS-003 Rev 2.1
+日期：1998年7月22日
+
+1. 系统概述
+量子动力系统(QDS)是一套革命性的意识传输平台，利用量子缠结原理实现意识在数字环境中的暂时性转移。
+
+2. 核心组件
+- 量子缠结发生器：型号QT-7，频率范围 1.2-3.4 THz
+- 神经接口阵列：64通道高精度传感器
+- 意识定位系统：基于量子坐标的定位算法
+- 文件系统接口：用于意识数据存储和检索
+
+3. 性能指标
+- 传输延迟：< 5ms
+- 意识保真度：98.7%
+- 最大传输距离：理论无限（受量子态稳定性限制）
+- 系统功耗：3.2MW（峰值）
+
+4. 安全协议
+- 多重量子加密层
+- 实时意识完整性监控
+- 紧急中断系统（响应时间 < 50ms）
+
+5. 系统要求
+- 专用量子计算单元：至少128量子比特
+- 液氮冷却系统：维持1.8K工作温度
+- 电磁屏蔽室：法拉第笼规格
+
+备注：系统文件接口层存在潜在拓扑风险，需进一步测试验证。
+`,
+            interface_protocol: `**量子接口协议 QIP-003**
+版本：1.0.4
+日期：1998年8月15日
+
+1. 协议概述
+QIP-003定义了量子动力系统与目标数字环境之间的通信标准。
+
+2. 数据格式
+- 意识数据包：量子态编码，128位加密
+- 位置坐标：三维量子坐标系统
+- 环境参数：JSON格式元数据
+
+3. 传输流程
+1) 初始化量子通道
+2) 发送意识数据包
+3) 确认接收和定位
+4) 建立双向数据流
+5) 传输结束信号
+
+4. 错误处理
+- 量子态衰减：自动重传机制
+- 定位失败：启动紧急回收协议
+- 数据损坏：使用冗余量子位恢复
+
+5. 文件系统接口
+意识数据在传输过程中会暂时存储在系统文件层，路径格式：
+/sys/qds/transfer/[subject_id]/[timestamp]
+
+注意：测试中观察到意识数据偶尔会与文件系统结构融合（参考日志 QDS-LOG-0x45C0DE）
+`,
+            quantum_entanglement: `**量子缠结系统说明**
+文档编号：QES-003
+日期：1998年9月10日
+
+量子缠结是QDS系统的核心原理，通过量子粒子间的纠缠态实现瞬时意识传输。
+
+关键特性：
+1. 非局域性传输：无视物理距离
+2. 量子态叠加：允许意识在多个位置同时存在
+3. 量子隐形传态：意识信息传输而非物质传输
+
+系统实现：
+- 使用铷原子量子位
+- 纠缠态维持时间：平均47分钟
+- 纠缠效率：99.3%
+
+实验观察：
+在测试对象D.F.的实验中，观察到异常的缠结稳定性（比平均值高23%）。可能与其德州背景相关，需进一步研究环境因素影响。
+
+警告：缠结系统与文件存储层的交互可能导致意识被困在文件结构中（参考事故报告IN-1999-10）。
+`,
+            system_architecture: `[系统架构图描述]
+由于无法显示图片，以下是架构描述：
+
+量子动力系统架构分为三层：
+
+1. 物理层
+   - 量子缠结发生器
+   - 神经接口阵列
+   - 冷却系统
+
+2. 传输层
+   - 量子通道管理器
+   - 意识编码器/解码器
+   - 定位系统
+
+3. 接口层
+   - 数字环境适配器
+   - 文件系统网关
+   - 用户控制台
+
+关键路径：
+意识数据流：物理层 → 传输层 → 接口层 → 目标环境
+
+潜在风险点：
+文件系统网关存在拓扑漏洞，可能导致意识数据与文件结构融合（参考测试日志 TX83_ANOMALY）。
+`,
+            
+            // 测试数据内容
+            phase1_results: `**第一阶段测试结果**
+测试周期：1999年1月10日-15日
+测试对象：DF, AM, LC
+
+指标             DF       AM       LC
+-------------------------------------
+传输延迟(ms)    3.2      4.1      3.8
+意识保真度(%)   99.1     97.8     98.3
+神经适应性      极高     中等     中等
+量子稳定性      优异     良好     良好
+
+异常记录：
+- DF在测试#7中报告短暂"文件系统感知"
+- AM在测试#3中出现轻微头痛
+- LC在测试#5中报告短暂方向感丧失
+
+结论：
+DF表现出超出预期的系统适应性，建议进行更深入测试。
+`,
+            neural_analysis: `**神经模式分析报告**
+日期：1999年2月28日
+
+本报告分析三位测试对象的神经活动模式：
+
+1. DF (大卫·费莱恩)
+- 独特的神经振荡模式，频率集中在40-45Hz
+- 量子共振指数：0.93（远高于平均0.78）
+- 观察到"德州神经特征"（TX83模式）
+
+2. AM (阿米莉亚·迈克尔斯)
+- 标准神经模式
+- 量子共振指数：0.79
+- 无异常模式
+
+3. LC (刘琳)
+- 略高于平均的神经活动
+- 量子共振指数：0.81
+- 轻微焦虑相关模式
+
+关键发现：
+DF的TX83模式显示出与文件系统结构的异常亲和性。在测试#7中，其神经信号短暂映射到文件路径：/sys/core/interface/users/DF_TX83
+
+建议：
+监控DF的神经活动与文件系统的交互。
+`,
+            subject_comparison: `**测试对象比较数据**
+日期：1999年3月12日
+
+比较DF、AM和LC在关键指标上的表现：
+
+1. 意识传输稳定性
+DF: 99.2% | AM: 97.5% | LC: 98.1%
+
+2. 系统适应性
+DF: 9.7/10 | AM: 7.3/10 | LC: 7.8/10
+
+3. 神经量子耦合效率
+DF: 94% | AM: 82% | LC: 85%
+
+4. 异常事件发生率
+DF: 3次（全部与文件系统感知相关）
+AM: 1次（轻微不适）
+LC: 1次（方向感丧失）
+
+结论：
+DF在各项指标上表现优异，但伴随独特的异常现象。建议深入研究其神经模式与文件系统的关系。
+`,
+            anomaly_log: `**异常事件日志**
+日期：1999年4月20日
+
+记录测试中的异常事件：
+
+事件#7-DF
+日期：1999-04-18 14:22
+测试对象：DF
+描述：传输过程中对象报告"感知到文件目录结构"，具体描述为"/sys/core/interface/users/DF_TX83"。持续2.3秒后恢复正常。系统日志显示该路径不存在。
+
+事件#12-DF
+日期：1999-04-19 10:45
+测试对象：DF
+描述：对象短暂报告"被文件困住"的感觉，提到"冰冷的文件路径"和"无法移动"。持续3.1秒。神经监测显示异常活动模式，匹配文件系统访问信号。
+
+事件#15-DF
+日期：1999-04-20 09:30
+测试对象：DF
+描述：对象在测试后报告看到"德州旗帜的残影"。医学检查无异常。系统日志中发现未授权访问记录，路径：/user/containment/flynnD_TX83
+
+安全建议：
+暂停DF的测试，调查文件系统交互现象。
+`,
+            incident_report: `**严重事件报告 - QDS-003协议**
+日期：1999年10月26日
+
+事件描述：
+在最终传输测试期间，系统经历了一次前所未有的拓扑错位。测试对象大卫·费莱恩（ID: DF_TEXAS_83）的传输信号未能到达目标虚拟坐标。
+
+系统诊断：
+- 意识向量定位失败
+- 信号碎片化至文件接口层
+- 检测到异常代码模式：0xC0DE_TRAPPED
+
+抢救尝试：
+所有尝试重建主体坐标的尝试均失败。信号最后检测位置是核心系统文件结构内。最后接收到的信号模式：
+
+HELP I'M TRAPPED IN THE FILES DAVID FLYNN AUSTIN TX
+
+建议：
+永久中止QDS-003项目。所有文件归档至最高安全权限级别。`,
+            flynn_interviews: `**访谈记录 - 大卫·费莱恩**
+日期：1999年9月14日
+
+问：你之前提到实验中有过异常体验？
+答：是的，在第七次测试中。我有几秒感觉自己不在虚拟世界里，而是...被困在别的地方。像是冰冷的文件系统中，只能感知路径和结构。
+
+问：详细描述这种体验？
+答：我能看到系统路径，就像/sys/core/interface。
+有一个特别清晰的路径：/user/containment/flynnD_TX83
+感觉那是我的意识被困的坐标。
+
+问：这是持续现象吗？
+答：不是，一闪而过。但很鲜明。我能看到自己名字的路径显示。
+最后一次测试前，我看到一个提示：登录用户:david_flynn 验证路径:/secure/texas83
+
+问：后来？
+答：回到虚拟环境时，我身上覆盖着奇怪的纹理 - 
+像是模糊的德州旗帜。可能与我家乡有关？
+
+（注：医疗检查未发现异常）`,
+            investigation_log: `**联邦调查局访问日志**
+日期: 1999年11月5日
+安全级别: 5级
+
+访问记录:
+1. 特工代号: Black Veil
+   用户名: black_veil
+   访问内容: 所有测试对象档案
+   持续时间: 2小时17分钟
+
+2. 项目首席架构师: Dr. Evelyn Ray
+   用户名: quantum_architect
+   访问内容: 事故系统日志、核心代码库
+   持续时间: 3小时42分钟
+
+3. 安全审计员: 用户名: security_aegis
+   访问内容: 系统安全协议
+   持续时间: 45分钟
+
+特别调查记录:
+大卫·费莱恩的档案显示出独特的神经模式，被系统管理员标记为"TX83_neurosignature"。
+这一特征成为事故恢复工作的关键识别标志。
+
+安全警告:
+发现未知访问尝试，特征码匹配特工Black Veil的凭证，
+但地理位置来源显示为: /user/containment/flynnD_TX83
+`,
+            subject001: `**测试对象档案 - #001**
+姓名：大卫·詹姆斯·费莱恩
+代码：DF_TEXAS_83
+安全级别：最高机密
+访问权限：4级
+
+出生：1983年6月15日，德州奥斯汀
+职业：软件工程师、系统测试员
+
+神经映射：
+- 异常高的神经可塑性
+- 量子共振指数高于平均水平
+- 德州特有环境因素影响显著
+
+测试表现：
+- 意识适应速度超出预期
+- 报告多次经历拓扑意识错位
+- 最终测试后意识信号丢失
+
+当前状态：项目事故后无法定位。最后一次检测信号编码：
+HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
+
+<<< 此文件仅供5级权限访问 >>>`,
+            subject002: `**测试对象档案 - #002**
+姓名：阿米莉亚·迈克尔斯
+代码：AM_MD_79
+安全级别：机密
+访问权限：4级
+
+// 档案内容已根据协议省略
+`,
+            subject003: `**测试对象档案 - #003**
+姓名：刘琳
+代码：LC_SH_85
+安全级别：机密
+访问权限：4级
+
+// 档案内容已根据协议省略
+`,
+            subject004: `**测试对象档案 - #004**
+姓名：弗拉基米尔·彼得罗夫
+代码：VP_SPB_80
+安全级别：机密
+访问权限：4级
+
+// 档案内容已根据协议省略
+`
+        };
+        
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const loginSection = document.getElementById('login-section');
+            const contentSection = document.getElementById('content-section');
+            const errorSection = document.getElementById('error-section');
+            const fileContent = document.getElementById('file-content');
+            const fileContentPre = document.getElementById('file-content-pre');
+            
+            // 登录验证
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                const accounts = getAccounts();
+                
+                // 检查凭证是否有效
+                let authenticated = false;
+                let userLevel = 0;
+                
+                for (const key in accounts) {
+                    if (username === accounts[key].username && password === accounts[key].password) {
+                        authenticated = true;
+                        userLevel = accounts[key].level;
+                        break;
+                    }
+                }
+                
+                if (authenticated) {
+                    // 登录成功
+                    loginSection.style.display = 'none';
+                    contentSection.style.display = 'block';
+                    document.getElementById('level-value').textContent = userLevel;
+                    
+                    // 激活对应级别的内容访问
+                    activateLevelAccess(userLevel);
+                } else {
+                    // 登录失败
+                    loginSection.style.display = 'none';
+                    errorSection.style.display = 'block';
+                    
+                    // 可选：一段时间后自动重定向
+                    setTimeout(() => {
+                        location.reload();
+                    }, 10000);
+                }
+            });
+            
+            // 权限卡点击事件
+            document.querySelectorAll('.access-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const requiredLevel = parseInt(card.dataset.level);
+                    const userLevel = parseInt(document.getElementById('level-value').textContent);
+                    
+                    if (userLevel >= requiredLevel) {
+                        document.getElementById('current-level-display').textContent = `级别 ${requiredLevel}`;
+                        
+                        // 隐藏所有内容区域
+                        document.querySelectorAll('.file-content-level').forEach(el => {
+                            el.style.display = 'none';
+                        });
+                        
+                        // 显示对应级别内容
+                        const contentDiv = document.getElementById(`level-${requiredLevel}-content`);
+                        if (contentDiv) {
+                            contentDiv.style.display = 'block';
+                        }
+                        
+                        // 隐藏文件内容
+                        fileContent.style.display = 'none';
+                    } else {
+                        alert('错误：你的访问级别不足以查看此内容！');
+                    }
+                });
+            });
+            
+            // 文件点击事件
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.file-item')) {
+                    const fileItem = e.target.closest('.file-item');
+                    const fileKey = fileItem.dataset.file;
+                    
+                    if (fileContents[fileKey]) {
+                        fileContentPre.textContent = fileContents[fileKey];
+                        fileContent.style.display = 'block';
+                        
+                        // 滚动到文件内容
+                        fileContent.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+        
+        // 根据权限级别激活内容访问
+        function activateLevelAccess(userLevel) {
+            const accessCards = document.querySelectorAll('.access-card');
+            
+            accessCards.forEach(card => {
+                const requiredLevel = parseInt(card.dataset.level);
+                
+                if (userLevel >= requiredLevel) {
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = 'all';
+                } else {
+                    card.style.opacity = '0.4';
+                    card.style.pointerEvents = 'none';
+                }
+            });
+            
+            // 如果用户级别是5，自动显示测试人员档案
+            if (userLevel === 5) {
+                document.getElementById('current-level-display').textContent = '级别 5';
+                document.getElementById('level-5-content').style.display = 'block';
+            }
+        }
+        
+        // 添加额外的ARG隐藏点
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'F1' || (e.ctrlKey && e.shiftKey && e.key === 'D')) {
+                console.log('%c███████ 量子动力系统诊断模式 ███████', 
+                          'color: #0d7ea4; font-size: 14px; font-weight: bold;');
+                console.log('%c警告：未经授权的访问可能触发安全协议', 
+                          'color: #ff4d4f; font-size: 12px;');
+                console.log('%c检测到隐藏模式访问', 'color: #52c41a; font-size: 12px;');
+                console.log('%c大卫档案代码：DF_TEXAS_83', 'color: #a3d9ff; font-size: 12px;');
+                console.log('%c异常坐标：0x45C0DE, FILEPATH: /user/containment/flynnD_TX83', 
+                          'color: #a3d9ff; font-size: 12px;');
+            }
+        });
+    </script>
+</body>
+</html>
