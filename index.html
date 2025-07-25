@@ -9,6 +9,7 @@
             --bg-primary: #0a1929;
             --bg-secondary: #001e3c;
             --accent: #0d7ea4;
+            --admin-accent: #a40dc8;
             --text-primary: #e6f7ff;
             --text-secondary: #a3d9ff;
             --error: #ff4d4f;
@@ -198,6 +199,10 @@
             color: var(--accent);
         }
         
+        #access-level.admin {
+            color: var(--admin-accent);
+        }
+        
         #access-level .level {
             font-size: 1.4rem;
             font-weight: bold;
@@ -206,6 +211,10 @@
             background: rgba(13, 126, 164, 0.1);
             border-radius: 20px;
             margin-top: 5px;
+        }
+        
+        #access-level.admin .level {
+            background: rgba(164, 13, 200, 0.1);
         }
         
         .access-grid {
@@ -232,12 +241,25 @@
             border-color: var(--accent);
         }
         
+        .access-card.admin {
+            border-color: var(--admin-accent);
+        }
+        
+        .access-card.admin:hover {
+            border-color: var(--admin-accent);
+            box-shadow: 0 5px 15px rgba(164, 13, 200, 0.3);
+        }
+        
         .access-card h3 {
             margin-bottom: 0.8rem;
             color: var(--accent);
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .access-card.admin h3 {
+            color: var(--admin-accent);
         }
         
         .access-card h3::before {
@@ -247,6 +269,10 @@
             height: 8px;
             background: var(--accent);
             border-radius: 50%;
+        }
+        
+        .access-card.admin h3::before {
+            background: var(--admin-accent);
         }
         
         .access-card p {
@@ -262,6 +288,10 @@
             margin-bottom: 15px;
         }
         
+        .access-card.admin .card-icon {
+            color: rgba(164, 13, 200, 0.5);
+        }
+        
         .access-level {
             position: absolute;
             top: 0;
@@ -270,6 +300,10 @@
             padding: 3px 8px;
             font-size: 0.8rem;
             border-bottom-left-radius: 8px;
+        }
+        
+        .access-card.admin .access-level {
+            background: rgba(164, 13, 200, 0.2);
         }
         
         /* 文件查看区域 */
@@ -304,6 +338,15 @@
             background: rgba(0, 30, 60, 0.8);
         }
         
+        .file-item.admin {
+            border-color: var(--admin-accent);
+        }
+        
+        .file-item.admin:hover {
+            border-color: var(--admin-accent);
+            background: rgba(30, 0, 40, 0.8);
+        }
+        
         .file-item h4 {
             display: flex;
             align-items: center;
@@ -313,6 +356,10 @@
         
         .file-item h4::before {
             content: "📄";
+        }
+        
+        .file-item.admin h4::before {
+            content: "🔒";
         }
         
         .file-meta {
@@ -333,10 +380,21 @@
             overflow-y: auto;
         }
         
+        #file-content.admin {
+            background: rgba(20, 0, 40, 0.7);
+            border-color: var(--admin-accent);
+        }
+        
         #file-content pre {
             white-space: pre-wrap;
             font-family: 'Consolas', monospace;
             line-height: 1.6;
+        }
+        
+        .scrambled-text {
+            font-family: monospace;
+            color: #ff4d4f;
+            letter-spacing: 2px;
         }
         
         /* 错误页面样式 */
@@ -510,12 +568,21 @@
                     <h3>测试人员档案</h3>
                     <p>所有参与人员的完整档案</p>
                 </div>
+                
+                <!-- 管理员权限卡片 -->
+                <div class="access-card admin" data-level="6">
+                    <div class="access-level">级别 6</div>
+                    <h3>故事情节档案</h3>
+                    <p>完整项目故事线和隐藏真相</p>
+                    <div class="card-icon">🔐</div>
+                </div>
             </div>
             
             <!-- 文件查看区域 -->
             <div id="file-viewer">
                 <h2>档案文档 <span id="current-level-display"></span></h2>
                 
+                <!-- 1级内容 -->
                 <div id="level-1-content" class="file-content-level" style="display: none;">
                     <div class="file-list">
                         <div class="file-item" data-file="project_summary">
@@ -535,7 +602,7 @@
                     </div>
                 </div>
                 
-                <!-- 技术文档部分 (级别 2) -->
+                <!-- 2级内容 -->
                 <div id="level-2-content" class="file-content-level" style="display: none;">
                     <div class="file-list">
                         <div class="file-item" data-file="tech_specs">
@@ -569,7 +636,7 @@
                     </div>
                 </div>
                 
-                <!-- 测试数据部分 (级别 3) -->
+                <!-- 3级内容 -->
                 <div id="level-3-content" class="file-content-level" style="display: none;">
                     <div class="file-list">
                         <div class="file-item" data-file="phase1_results">
@@ -603,6 +670,7 @@
                     </div>
                 </div>
                 
+                <!-- 4级内容 -->
                 <div id="level-4-content" class="file-content-level" style="display: none;">
                     <div class="file-list">
                         <div class="file-item" data-file="incident_report">
@@ -629,6 +697,7 @@
                     </div>
                 </div>
                 
+                <!-- 5级内容 -->
                 <div id="level-5-content" class="file-content-level" style="display: none;">
                     <div class="file-list">
                         <div class="file-item" data-file="subject001">
@@ -662,6 +731,40 @@
                     </div>
                 </div>
                 
+                <!-- 6级内容（管理员） -->
+                <div id="level-6-content" class="file-content-level" style="display: none;">
+                    <div class="file-list">
+                        <div class="file-item admin" data-file="full_story">
+                            <h4>完整故事情节档案.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：5.2MB</span>
+                                <span>创建：1999-12-01</span>
+                            </div>
+                        </div>
+                        <div class="file-item admin" data-file="hidden_truth">
+                            <h4>隐藏真相报告.md</h4>
+                            <div class="file-meta">
+                                <span>大小：3.1MB</span>
+                                <span>创建：1999-11-15</span>
+                            </div>
+                        </div>
+                        <div class="file-item admin" data-file="project_origins">
+                            <h4>项目起源与真实目标.pdf</h4>
+                            <div class="file-meta">
+                                <span>大小：4.5MB</span>
+                                <span>创建：1998-03-12</span>
+                            </div>
+                        </div>
+                        <div class="file-item admin" data-file="recovery_plan">
+                            <h4>大卫恢复计划.txt</h4>
+                            <div class="file-meta">
+                                <span>大小：2.8MB</span>
+                                <span>创建：1999-12-10</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div id="file-content">
                     <pre id="file-content-pre"></pre>
                 </div>
@@ -690,7 +793,7 @@
     </footer>
 
     <script>
-        // 用户凭证存储（隐藏和混淆）
+        // 用户凭证存储
         const hiddenAccounts = () => {
             const accounts = {
                 // David Flynn (Level 4)
@@ -710,6 +813,12 @@
                     username: "dr_drake",
                     password: "filematrix_override99",
                     level: 5
+                },
+                // 管理员账号 (Level 6)
+                "SYSTEM_ADMIN": {
+                    username: "sys_admin",
+                    password: "quantum_omega_override",
+                    level: 6
                 }
             };
             
@@ -722,7 +831,8 @@
             return {
                 "david_flynn": accounts.DAVID_FLYNN,
                 "morgan_f": accounts.FBI_AGENT_MORGAN,
-                "dr_drake": accounts.DR_DRAKE
+                "dr_drake": accounts.DR_DRAKE,
+                "sys_admin": accounts.SYSTEM_ADMIN
             };
         };
         
@@ -752,8 +862,6 @@ QDS-TR-1999-07
 初始测试显示有希望的信号稳定性，但某些测试对象报告了短暂性意识错位现象。特别标注：受试者D.F.表现出异常的神经适应性，可能是德州独特环境因素造成的。
 
 需要进一步调查这种神经模式的来源。`,
-            
-            // 技术文档内容
             tech_specs: `**量子动力系统技术规格书**
 版本：QDS-003 Rev 2.1
 日期：1998年7月22日
@@ -862,8 +970,6 @@ QIP-003定义了量子动力系统与目标数字环境之间的通信标准。
 潜在风险点：
 文件系统网关存在拓扑漏洞，可能导致意识数据与文件结构融合（参考测试日志 TX83_ANOMALY）。
 `,
-            
-            // 测试数据内容
             phase1_results: `**第一阶段测试结果**
 测试周期：1999年1月10日-15日
 测试对象：DF, AM, LC
@@ -1048,25 +1154,192 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
 安全级别：机密
 访问权限：4级
 
-// 档案内容已根据协议省略
-`,
+出生：1979年3月22日，马里兰州巴尔的摩
+职业：神经科学家
+
+神经映射：
+- 标准神经模式
+- 量子共振指数：0.79
+- 无异常模式
+
+测试表现：
+- 稳定的意识传输
+- 报告轻微不适一次
+- 无拓扑意识错位报告
+
+当前状态：项目结束后返回原岗位`,
             subject003: `**测试对象档案 - #003**
 姓名：刘琳
 代码：LC_SH_85
 安全级别：机密
 访问权限：4级
 
-// 档案内容已根据协议省略
-`,
+出生：1985年11月8日，中国上海
+职业：计算机工程师
+
+神经映射：
+- 略高于平均的神经活动
+- 量子共振指数：0.81
+- 轻微焦虑相关模式
+
+测试表现：
+- 良好的系统适应性
+- 报告方向感丧失一次
+- 无文件系统感知报告
+
+当前状态：项目结束后加入QDS-004项目`,
             subject004: `**测试对象档案 - #004**
 姓名：弗拉基米尔·彼得罗夫
 代码：VP_SPB_80
 安全级别：机密
 访问权限：4级
 
-// 档案内容已根据协议省略
+出生：1980年7月14日，俄罗斯圣彼得堡
+职业：物理学家
+
+神经映射：
+- 稳定的神经模式
+- 量子共振指数：0.83
+- 无异常模式
+
+测试表现：
+- 可靠的测试结果
+- 无异常报告
+- 高质量数据贡献者
+
+当前状态：项目结束后返回原研究机构`,
+            full_story: `**量子动力系统完整故事情节档案**
+机密级别：奥米茄级
+访问权限：仅限管理员
+
+1. 项目起源
+量子动力系统(QDS)最初是冷战时期的军事项目"星门计划"的延续。其真实目标是通过量子传输实现意识操控，用于情报收集和秘密行动。
+
+2. 大卫·费莱恩的特殊性
+大卫的德州背景并非偶然。他的家族有独特的神经遗传特征，被称为"德州神经印记"(TNI)。这种特征使他的意识更容易与量子系统融合，但也导致了他被困在文件系统中。
+
+3. 事故真相
+1999年10月26日的事故并非意外。系统检测到外部入侵尝试，触发了安全协议"文件系统隔离"。大卫的意识被作为诱饵隔离在文件系统中，以保护核心机密。
+
+4. 隐藏目标
+QDS-003的真实目标是开发意识武器系统：
+- 代号"幽灵协议"：将特工意识传输到敌方系统
+- 代号"档案陷阱"：将目标意识困在文件系统中
+
+5. 恢复计划
+项目组已制定"凤凰协议"来恢复大卫：
+- 阶段1：定位意识碎片（已完成）
+- 阶段2：重建意识矩阵（进行中）
+- 阶段3：反向传输（计划中）
+
+6. 外部威胁
+联邦调查局(FBI)并非调查事故，而是试图获取QDS技术。特工Morgan F的真实任务是窃取核心技术。
+
+7. 大卫的求救信息
+大卫的求救信息包含隐藏坐标：/sys/core/recovery/phase2。这是恢复计划的关键路径。
+
+--- 档案结束 ---
+警告：未经授权访问此档案将触发系统自毁协议
+`,
+            hidden_truth: `**隐藏真相报告**
+机密级别：奥米茄级
+
+QDS项目并非科学探索，而是国防高级研究计划局(DARPA)的黑色项目。真实目标包括：
+
+1. 意识武器化
+- 开发"意识病毒"感染目标系统
+- 创建"数字幽灵"执行破坏任务
+
+2. 意识永生研究
+- 将濒死者意识传输到安全系统
+- 建立"意识档案馆"保存重要人物
+
+3. 大卫的作用
+大卫是第一个成功的"意识载体"，证明人类意识可以在数字环境中存活。他的被困是意外，但提供了宝贵的研究数据。
+
+4. 后续项目
+基于QDS-003的经验，已启动：
+- QDS-004：意识远程传输
+- QDS-005：数字永生协议
+- QDS-006：意识武器平台
+
+5. 伦理问题
+所有测试对象都未被告知真实风险。大卫的"事故"被故意允许发生以收集数据。
+
+--- 报告结束 ---
+`,
+            project_origins: `**项目起源与真实目标**
+机密级别：奥米茄级
+
+起源：
+1983年，德克萨斯州实验室首次发现"量子神经共振"现象。大卫·费莱恩的父亲参与早期实验，导致大卫出生时具有独特的神经特征。
+
+真实目标：
+1. 建立意识控制网络
+2. 开发无法追踪的间谍技术
+3. 实现关键人物的"数字永生"
+4. 创建无法防御的意识武器
+
+大卫的角色：
+大卫是完美的测试对象，因为：
+- 遗传的神经敏感性
+- 无亲属的社会关系
+- 德州环境增强的量子共振
+
+项目时间线：
+- 1995：概念验证
+- 1997：首次动物实验
+- 1998：人类志愿者招募
+- 1999：大卫事故与项目暂停
+- 2000：项目重启为QDS-004
+
+--- 文档结束 ---
+`,
+            recovery_plan: `**大卫恢复计划 - 凤凰协议**
+机密级别：奥米茄级
+
+当前状态：
+大卫的意识被分割在多个系统文件中：
+1. /sys/core/users/david_flynn (主意识)
+2. /sys/logs/error/1999-10-26 (事故记忆)
+3. /sys/backup/tx83_neural_pattern (神经模式)
+
+恢复阶段：
+阶段1：意识定位（已完成）
+- 通过求救信息定位主意识碎片
+
+阶段2：碎片重组（进行中）
+- 使用量子重组算法重建意识
+- 预计完成时间：2000年3月
+
+阶段3：反向传输
+- 需要开发新的量子传输协议
+- 需要大卫的身体处于稳定状态
+
+阶段4：重新整合
+- 将意识重新整合到身体中
+- 风险：记忆丢失或人格改变
+
+关键路径：
+/sys/core/recovery/phase2/quantum_matrix
+
+访问密钥：
+TX83-RECOVERY-1999-OMEGA
+
+警告：
+任何未授权访问此计划将导致意识碎片永久丢失
 `
         };
+        
+        // 生成乱码文本
+        function generateScrambledText(length) {
+            const chars = '01!@#$%^&*()_+-=[]{}|;:,.<>?/';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
         
         // 页面初始化
         document.addEventListener('DOMContentLoaded', () => {
@@ -1074,6 +1347,8 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
             const loginSection = document.getElementById('login-section');
             const contentSection = document.getElementById('content-section');
             const errorSection = document.getElementById('error-section');
+            const accessLevel = document.getElementById('access-level');
+            const levelValue = document.getElementById('level-value');
             const fileContent = document.getElementById('file-content');
             const fileContentPre = document.getElementById('file-content-pre');
             
@@ -1089,11 +1364,13 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
                 // 检查凭证是否有效
                 let authenticated = false;
                 let userLevel = 0;
+                let isAdmin = false;
                 
                 for (const key in accounts) {
                     if (username === accounts[key].username && password === accounts[key].password) {
                         authenticated = true;
                         userLevel = accounts[key].level;
+                        isAdmin = userLevel === 6;
                         break;
                     }
                 }
@@ -1102,7 +1379,13 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
                     // 登录成功
                     loginSection.style.display = 'none';
                     contentSection.style.display = 'block';
-                    document.getElementById('level-value').textContent = userLevel;
+                    levelValue.textContent = userLevel;
+                    
+                    // 如果是管理员，添加特殊样式
+                    if (isAdmin) {
+                        accessLevel.classList.add('admin');
+                        accessLevel.querySelector('.level').textContent = 'ADMIN';
+                    }
                     
                     // 激活对应级别的内容访问
                     activateLevelAccess(userLevel);
@@ -1122,10 +1405,12 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
             document.querySelectorAll('.access-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const requiredLevel = parseInt(card.dataset.level);
-                    const userLevel = parseInt(document.getElementById('level-value').textContent);
+                    const userLevel = parseInt(levelValue.textContent);
+                    const isAdmin = userLevel === 6;
                     
                     if (userLevel >= requiredLevel) {
-                        document.getElementById('current-level-display').textContent = `级别 ${requiredLevel}`;
+                        document.getElementById('current-level-display').textContent = 
+                            requiredLevel === 6 ? '管理员' : `级别 ${requiredLevel}`;
                         
                         // 隐藏所有内容区域
                         document.querySelectorAll('.file-content-level').forEach(el => {
@@ -1136,6 +1421,13 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
                         const contentDiv = document.getElementById(`level-${requiredLevel}-content`);
                         if (contentDiv) {
                             contentDiv.style.display = 'block';
+                        }
+                        
+                        // 如果是管理员查看管理员内容，添加特殊样式
+                        if (requiredLevel === 6 && isAdmin) {
+                            fileContent.classList.add('admin');
+                        } else {
+                            fileContent.classList.remove('admin');
                         }
                         
                         // 隐藏文件内容
@@ -1151,9 +1443,38 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
                 if (e.target.closest('.file-item')) {
                     const fileItem = e.target.closest('.file-item');
                     const fileKey = fileItem.dataset.file;
+                    const userLevel = parseInt(levelValue.textContent);
+                    const isAdmin = userLevel === 6;
+                    
+                    // 检查是否是故事情节档案
+                    const isStoryFile = [
+                        'full_story', 
+                        'hidden_truth', 
+                        'project_origins', 
+                        'recovery_plan'
+                    ].includes(fileKey);
                     
                     if (fileContents[fileKey]) {
-                        fileContentPre.textContent = fileContents[fileKey];
+                        // 如果是故事情节档案且不是管理员
+                        if (isStoryFile && !isAdmin) {
+                            // 五级权限看到乱码
+                            if (userLevel === 5) {
+                                fileContentPre.innerHTML = 
+                                    `<span class="scrambled-text">${generateScrambledText(500)}</span>`;
+                                fileContentPre.innerHTML += 
+                                    '\n\n警告：访问级别不足，内容已加密';
+                            } 
+                            // 其他级别看到访问拒绝
+                            else {
+                                fileContentPre.textContent = 
+                                    '访问拒绝：需要管理员权限查看此档案';
+                            }
+                        } 
+                        // 显示正常内容
+                        else {
+                            fileContentPre.textContent = fileContents[fileKey];
+                        }
+                        
                         fileContent.style.display = 'block';
                         
                         // 滚动到文件内容
@@ -1179,8 +1500,14 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
                 }
             });
             
+            // 如果用户级别是6（管理员），自动显示故事情节档案
+            if (userLevel === 6) {
+                document.getElementById('current-level-display').textContent = '管理员';
+                document.getElementById('level-6-content').style.display = 'block';
+                document.getElementById('file-content').classList.add('admin');
+            }
             // 如果用户级别是5，自动显示测试人员档案
-            if (userLevel === 5) {
+            else if (userLevel === 5) {
                 document.getElementById('current-level-display').textContent = '级别 5';
                 document.getElementById('level-5-content').style.display = 'block';
             }
@@ -1197,6 +1524,8 @@ HELP TRAPPED IN FILES DAVID FLYNN AUSTIN TX
                 console.log('%c大卫档案代码：DF_TEXAS_83', 'color: #a3d9ff; font-size: 12px;');
                 console.log('%c异常坐标：0x45C0DE, FILEPATH: /user/containment/flynnD_TX83', 
                           'color: #a3d9ff; font-size: 12px;');
+                console.log('%c管理员提示：凤凰协议恢复密钥 TX83-RECOVERY', 
+                          'color: #a40dc8; font-size: 12px;');
             }
         });
     </script>
